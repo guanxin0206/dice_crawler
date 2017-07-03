@@ -1,6 +1,6 @@
 #!/usr/bin/env python -t
 # -*- coding: UTF-8 -*-
-import url_manager,html_downloader,html_parser,html_outputer
+import url_manager,html_downloader,html_parser,html_outputer,mysql_inserter
 
 class SpiderMain(object):
     def __init__(self):
@@ -9,6 +9,7 @@ class SpiderMain(object):
         self.html_parser = html_parser.HtmlParser()
         self.json_parser = json_parser.JsonParser()
         self.outputer = html_outputer.HtmlOutputer()
+        self.inserter = mysql_inserter.MySQLInserter(conn)
         
 
     def craw(self, root_url):
@@ -33,6 +34,8 @@ class SpiderMain(object):
 
                 # Values to insert keyword, jobTitle, jobUrl, company, postDate, jobUniqueId, JobDescription
                 qry = ""
+                self.ins
+                
                 # the new urls should only be the nextURL
                 self.urls.add_new_urls(new_urls)
                 
