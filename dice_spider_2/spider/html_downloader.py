@@ -3,8 +3,9 @@
 import urllib2
 import requests
 
+
 class HtmlDownloader(object):
-    def download(self,url):
+    def download(self, url):
         if url is None:
             return None
 
@@ -15,7 +16,7 @@ class HtmlDownloader(object):
 
         return response.url, response.read()
 
-    def download_json(self,url):
+    def download_json(self, url):
         if url is None:
             return None
         try:
@@ -24,5 +25,3 @@ class HtmlDownloader(object):
         except:
             raise
         return d
-
-

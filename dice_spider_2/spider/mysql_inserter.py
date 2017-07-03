@@ -5,12 +5,14 @@ Created on Jun 11, 2017
 '''
 # !/usr/bin/env python -t
 # -*- coding: UTF-8 -*-
+import mysql.connector
 
 
 class MySQLInserter(object):
 
     def __init__(self, conn):
         self.conn = conn
+        self.duplicate_counter = 0
 
     def insert(self, job_unique_id,
                job_title, job_url,
@@ -26,9 +28,13 @@ class MySQLInserter(object):
             cursor.execute(sql, data)
             # print "last executed", cursor.last_executed_query()
             print "last statement:", cursor.statement
+            if self.duplicate_counter != 0:
+                self.duplicate_counter = 0
             self.conn.commit()
-        except Exception as err:
-            print err
+
+        except mysql.connector.IntegrityError as err:
+            self.duplicate_counter += 1
+            print "Error:{} ".format(err)
             self.conn.rollback()
             # raise Exception
         finally:

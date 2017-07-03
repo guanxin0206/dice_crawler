@@ -20,11 +20,12 @@ class SpiderMain(object):
         conn = mysql.connector.connect(user='root', password='u6a3pwhe',
                                        database='dice_test')
         self.inserter = mysql_inserter.MySQLInserter(conn)
+        self.duplicate_counter = self.inserter.duplicate_counter
 
     def craw(self, root_url):
-        count = 1
+        count = 0
         self.urls.add_new_url(root_url)
-        while self.urls.has_new_url() or count <= 10:
+        while self.urls.has_new_url() or self.duplicate_counter <= 5:
             try:
                 new_url = self.urls.get_new_url()
                 print "Craw %d : %s" % (count, new_url)
@@ -40,6 +41,10 @@ class SpiderMain(object):
                     job_description = self.html_parser.parse(real_url,
                                                              html_cont)
                     data_dict[key]['jobDescription'] = job_description
+
+                    if job_description is None:
+                        continue
+
                     self.inserter.insert(key, data_dict[key]['jobTitle'],
                                          data_dict[key]['detailUrl'],
                                          data_dict[key]['company'],
@@ -48,7 +53,8 @@ class SpiderMain(object):
 
                 # the new urls should only be the nextURL
                 if next_url is not None:
-                    next_url = "http://service.dice.com" + next_url
+                    next_url = "http://service.dice.com" + next_url.encode(
+                        'utf-8')
                     self.urls.add_new_url(next_url)
 
                 count = count + 1
@@ -62,6 +68,6 @@ class SpiderMain(object):
 
 if __name__ == "__main__":
     root_url = ("http://service.dice.com/api/rest/"
-                "jobsearch/v1/simple.json?text=java&page=2")
+                "jobsearch/v1/simple.json?text=java&sort=1&page=4")
     obj_spider = SpiderMain()
     obj_spider.craw(root_url)

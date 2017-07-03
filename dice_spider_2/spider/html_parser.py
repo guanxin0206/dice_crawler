@@ -28,5 +28,11 @@ class HtmlParser(object):
 
     def __get_new_data(self, page_url, soup):
         # <div class="highlight-black" id="jobdescSec">
-        jd_node = soup.find(id="jobdescSec").get_text()
+        try:
+            jd_node = soup.find(id="jobdescSec").get_text()
+        except AttributeError:
+            print "404 page no longer exists", page_url
+            return None
+        except Exception as err:
+            print "other errors while parsing web page", err
         return jd_node
